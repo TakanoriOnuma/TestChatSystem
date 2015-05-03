@@ -6,3 +6,10 @@ body {
 a {
   color: #00B7FF;
 }
+
+.list > p {
+  padding: 5px;
+  width: 30em;
+  border-width: 1px;
+  border-style: solid;
+}
