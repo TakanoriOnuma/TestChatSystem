@@ -35,7 +35,10 @@ app.use('/users', users);
 var Schema = mongoose.Schema;
 var chatSchema = new Schema({
   name : String,
-  text : String
+  text : String,
+  isMove : { type: Boolean, default: false },
+  x : { type: Number, default: 0 },
+  y : { type: Number, default: 0 }
 });
 mongoose.model('Chat', chatSchema);
 

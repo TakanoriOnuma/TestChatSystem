@@ -100,7 +100,6 @@ io.sockets.on('connection', function(socket) {
   // chatというイベントを受信した時
   socket.on('chat', function(chat) {
     console.log('text : ' + chat.text);
-    io.emit('chat', chat);
 
     var Chat = mongoose.model('Chat');
     var chatTable = new Chat();
@@ -108,6 +107,21 @@ io.sockets.on('connection', function(socket) {
     chatTable.text = chat.text;
     chatTable.save();
 
+    // DBのキーを保存して送る
+    chat._id = chatTable._id;
+    io.emit('chat', chat);
+  });
+
+  // toggleChatというイベントを受信した時
+  socket.on('toggleChat', function(key) {
+    var Chat = mongoose.model('Chat');
+
+    Chat.findOne({_id: key.key}, function(err, chat) {
+      chat.isMove = !chat.isMove;
+      chat.save();
+    });
+
+    io.emit('toggleChat', key);
   });
 
   // 接続が切断した時

@@ -21,21 +21,53 @@ function getList() {
     $.get('chat', function(chats) {
       // 取得したChatを追加していく
       $.each(chats, function(index, chat) {
-        $list.append('<p>名前：' + chat.name + '<br>内容：' + chat.text + '</p>');
+        $list.append(makeChat(chat));
       });
       // 一覧を表示する
       $list.fadeIn();
+
+      $('.list input').click(function() {
+        console.log('emit');
+        var key = $(this).attr('key');
+        socket.emit('toggleChat', {
+          key : key
+        });
+      });
     });
   });
+}
+
+// chatを生成する
+function makeChat(chat) {
+  htmlTag  = '<p>名前：' + chat.name;
+  text = (chat.isMove) ? 'ON' : 'OFF';
+  htmlTag += '   <input type="button" key="' + chat._id + '" value="' + text + '">';
+  htmlTag += '<br>';
+  htmlTag += '内容：' + chat.text;
+  htmlTag += '<br>';
+  return htmlTag;
 }
 
 // chatというイベントを受信したらHTML要素を追加する
 socket.on('chat', function(chat) {
   var $list = $('.list');
   $list.fadeIn();
-  $list.append('<p>名前：' + chat.name + '<br>内容：' + chat.text + '</p>');
+  $list.append(makeChat(chat));
+  $('.list input:last').click(function() {
+    var key = $(this).attr('key');
+    socket.emit('toggleChat', {
+      key : key
+    });
+  });
+
 });
 
+// toggleChatというイベントを受信したらkeyのチャットをトグルする
+socket.on('toggleChat', function(key) {
+  var $button = $('.list input[key=' + key.key + ']');
+  var text = $button.attr('value');
+  $button.attr('value', (text === 'ON') ? 'OFF' : 'ON');
+});
 
 // フォーム入力されたChatを追加する
 function postList() {
