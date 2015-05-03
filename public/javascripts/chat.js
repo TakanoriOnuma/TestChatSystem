@@ -15,13 +15,22 @@ $('#fm').submit(function() {
 function getList() {
   // 既に表示されている一覧を非表示にして削除する
   var $list = $('.list');
+  var $chatboard = $('.chatboard');
   $list.fadeOut(function() {
     $list.children().remove();
+    $chatboard.children().remove();
     // /chatにGETアクセスする
     $.get('chat', function(chats) {
       // 取得したChatを追加していく
       $.each(chats, function(index, chat) {
         $list.append(makeChat(chat));
+        if(chat.isMove === true) {
+          $chatboard.append(makeChatleaf(chat));
+          $('.leaf:last').css({
+            top: chat.y,
+            left: chat.x
+          });
+        }
       });
       // 一覧を表示する
       $list.fadeIn();
@@ -33,6 +42,26 @@ function getList() {
           key : key
         });
       });
+
+      // チャットの移動
+      var flag = false;
+      var pos = {};
+      $('.leaf')
+        .mousedown(function(e) {
+          flag = true;
+          return false;
+        })
+        .mouseup(function() {
+          flag = false;
+        })
+        .mousemove(function(e) {
+          if(flag === true) {
+            $(this).css({
+              top:  e.pageY - 30,
+              left: e.pageX - 20
+            });
+          }
+        });
     });
   });
 }
@@ -45,6 +74,12 @@ function makeChat(chat) {
   htmlTag += '<br>';
   htmlTag += '内容：' + chat.text;
   htmlTag += '<br>';
+  return htmlTag;
+}
+
+// chatleafを生成する
+function makeChatleaf(chat) {
+  htmlTag = '<p class="leaf">' + chat.text + '</p>';
   return htmlTag;
 }
 
