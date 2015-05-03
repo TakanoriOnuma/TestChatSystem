@@ -51,28 +51,35 @@ function getList() {
 
 // chatの移動イベントの追加
 function setMoveListener($leaf) {
-  var flag = false;
   var pos = {};
+  var $mover = null;
+  var mousemover = function($mover, e) {
+    if($mover !== null) {
+      $mover.css({
+        top:  e.pageY - 30,
+        left: e.pageX - 20
+      });
+      socket.emit('moveChat', {
+        x : e.pageX - 20,
+        y : e.pageY - 30,
+        key : $mover.attr('key')
+      });
+    }
+  };
   $leaf
     .mousedown(function(e) {
-      flag = true;
+      $mover = $(this);
       return false;
     })
     .mouseup(function() {
-      flag = false;
+      $mover = null;
     })
     .mousemove(function(e) {
-      if(flag === true) {
-        $(this).css({
-          top:  e.pageY - 30,
-          left: e.pageX - 20
-        });
-        socket.emit('moveChat', {
-          x : e.pageX - 20,
-          y : e.pageY - 30,
-          key : $(this).attr('key')
-        });
-      }
+      mousemover($mover, e);
+    });
+  $('body')
+    .mousemove(function(e) {
+      mousemover($mover, e);
     });
 }
 
