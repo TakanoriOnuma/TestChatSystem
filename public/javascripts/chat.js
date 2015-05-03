@@ -60,6 +60,11 @@ function getList() {
               top:  e.pageY - 30,
               left: e.pageX - 20
             });
+            socket.emit('moveChat', {
+              x : e.pageX - 20,
+              y : e.pageY - 30,
+              key : $(this).attr('key')
+            });
           }
         });
     });
@@ -79,7 +84,7 @@ function makeChat(chat) {
 
 // chatleafを生成する
 function makeChatleaf(chat) {
-  htmlTag = '<p class="leaf">' + chat.text + '</p>';
+  htmlTag = '<p class="leaf" key="' + chat._id + '">' + chat.text + '</p>';
   return htmlTag;
 }
 
@@ -102,6 +107,15 @@ socket.on('toggleChat', function(key) {
   var $button = $('.list input[key=' + key.key + ']');
   var text = $button.attr('value');
   $button.attr('value', (text === 'ON') ? 'OFF' : 'ON');
+});
+
+// moveChatというイベントを受信したら指定したチャットを移動する
+socket.on('moveChat', function(moveChat) {
+  var $chat = $('.chatboard p[key=' + moveChat.key + ']');
+  $chat.css({
+    left: moveChat.x,
+    top:  moveChat.y
+  });
 });
 
 // フォーム入力されたChatを追加する
