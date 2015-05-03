@@ -109,7 +109,7 @@ io.sockets.on('connection', function(socket) {
 
     // DBのキーを保存して送る
     chat._id = chatTable._id;
-    io.emit('chat', chat);
+    io.emit('chat', chatTable);
   });
 
   // toggleChatというイベントを受信した時

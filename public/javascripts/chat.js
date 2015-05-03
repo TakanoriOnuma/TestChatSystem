@@ -44,42 +44,60 @@ function getList() {
       });
 
       // チャットの移動
-      var flag = false;
-      var pos = {};
-      $('.leaf')
-        .mousedown(function(e) {
-          flag = true;
-          return false;
-        })
-        .mouseup(function() {
-          flag = false;
-        })
-        .mousemove(function(e) {
-          if(flag === true) {
-            $(this).css({
-              top:  e.pageY - 30,
-              left: e.pageX - 20
-            });
-            socket.emit('moveChat', {
-              x : e.pageX - 20,
-              y : e.pageY - 30,
-              key : $(this).attr('key')
-            });
-          }
-        });
+      setMoveListener($('.leaf'));
     });
   });
 }
 
+// chatの移動イベントの追加
+function setMoveListener($leaf) {
+  var flag = false;
+  var pos = {};
+  $leaf
+    .mousedown(function(e) {
+      flag = true;
+      return false;
+    })
+    .mouseup(function() {
+      flag = false;
+    })
+    .mousemove(function(e) {
+      if(flag === true) {
+        $(this).css({
+          top:  e.pageY - 30,
+          left: e.pageX - 20
+        });
+        socket.emit('moveChat', {
+          x : e.pageX - 20,
+          y : e.pageY - 30,
+          key : $(this).attr('key')
+        });
+      }
+    });
+}
+
 // chatを生成する
 function makeChat(chat) {
-  htmlTag  = '<p>名前：' + chat.name;
+  var date = chat.createdDate;
+  var htmlTag = '<p>日付：' + dateToStr(new Date(date)) + '<br>';
+  htmlTag += '名前：' + chat.name;
   text = (chat.isMove) ? 'ON' : 'OFF';
   htmlTag += '   <input type="button" key="' + chat._id + '" value="' + text + '">';
   htmlTag += '<br>';
   htmlTag += '内容：' + chat.text;
   htmlTag += '<br>';
   return htmlTag;
+}
+
+// 日付を文字列にして返す
+function dateToStr(date) {
+  var str = date.getFullYear() + '/';
+  str += date.getMonth() + '/';
+  str += date.getDate() + ' ';
+  str += date.getHours() + ':';
+  str += date.getMinutes() + ':';
+  str += date.getSeconds();
+  return str;
 }
 
 // chatleafを生成する
@@ -98,6 +116,14 @@ socket.on('chat', function(chat) {
     socket.emit('toggleChat', {
       key : key
     });
+    $('.chatboard').append(makeChatleaf(chat));
+    $('.leaf:last')
+      .css({
+        top: chat.y,
+        left: chat.x
+      })
+      .hide();
+    setMoveListener($('.leaf'));
   });
 
 });

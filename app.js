@@ -34,11 +34,12 @@ app.use('/users', users);
 // スキーマの定義
 var Schema = mongoose.Schema;
 var chatSchema = new Schema({
+  createdDate : { type: Date, default: Date.now },
   name : String,
   text : String,
   isMove : { type: Boolean, default: false },
-  x : { type: Number, default: 0 },
-  y : { type: Number, default: 0 }
+  x : { type: Number, default: 400 },
+  y : { type: Number, default: 50 }
 });
 mongoose.model('Chat', chatSchema);
 
