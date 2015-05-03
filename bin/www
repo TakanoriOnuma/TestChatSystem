@@ -88,3 +88,30 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+var mongoose = require('mongoose');
+
+var io = require('socket.io').listen(server);
+
+io.sockets.on('connection', function(socket) {
+  // 接続のidを確認
+  console.log('connected', socket.id);
+
+  // chatというイベントを受信した時
+  socket.on('chat', function(chat) {
+    console.log('text : ' + chat.text);
+    io.emit('chat', chat);
+
+    var Chat = mongoose.model('Chat');
+    var chatTable = new Chat();
+    chatTable.name = chat.name;
+    chatTable.text = chat.text;
+    chatTable.save();
+
+  });
+
+  // 接続が切断した時
+  socket.on('disconnect', function() {
+    console.log('disconnect');
+  });
+});

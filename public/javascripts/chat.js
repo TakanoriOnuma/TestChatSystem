@@ -1,3 +1,5 @@
+var socket = io();
+
 // ページが表示された時Chatリストを表示する
 $(function() {
   getList();
@@ -27,6 +29,13 @@ function getList() {
   });
 }
 
+// chatというイベントを受信したらHTML要素を追加する
+socket.on('chat', function(chat) {
+  var $list = $('.list');
+  $list.fadeIn();
+  $list.append('<p>名前：' + chat.name + '<br>内容：' + chat.text + '</p>');
+});
+
 
 // フォーム入力されたChatを追加する
 function postList() {
@@ -37,10 +46,16 @@ function postList() {
   // テキストの入力項目を空にする
   $('#text').val('');
 
+  socket.emit('chat', {
+    name : name,
+    text : text
+  });
+/*
   // /chatにPOSTアクセスする
   $.post('chat', {name: name, text: text}, function(res) {
     console.log(res);
     // 再度表示する
     getList();
   });
+*/
 }
