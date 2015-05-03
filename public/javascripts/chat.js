@@ -24,19 +24,19 @@ function getList() {
       // 取得したChatを追加していく
       $.each(chats, function(index, chat) {
         $list.append(makeChat(chat));
-        if(chat.isMove === true) {
-          $chatboard.append(makeChatleaf(chat));
-          $('.leaf:last').css({
-            top: chat.y,
-            left: chat.x
-          });
+        $chatboard.append(makeChatleaf(chat));
+        $('.leaf:last').css({
+          top: chat.y,
+          left: chat.x
+        });
+        if(chat.isMove === false) {
+          $('.leaf:last').hide();
         }
       });
       // 一覧を表示する
       $list.fadeIn();
 
       $('.list input').click(function() {
-        console.log('emit');
         var key = $(this).attr('key');
         socket.emit('toggleChat', {
           key : key
@@ -107,6 +107,14 @@ socket.on('toggleChat', function(key) {
   var $button = $('.list input[key=' + key.key + ']');
   var text = $button.attr('value');
   $button.attr('value', (text === 'ON') ? 'OFF' : 'ON');
+
+  $chat = $('.chatboard p[key=' + key.key + ']');
+  if(text === 'ON') {
+    $chat.hide(100);
+  }
+  else {
+    $chat.show(100);
+  }
 });
 
 // moveChatというイベントを受信したら指定したチャットを移動する
@@ -131,12 +139,4 @@ function postList() {
     name : name,
     text : text
   });
-/*
-  // /chatにPOSTアクセスする
-  $.post('chat', {name: name, text: text}, function(res) {
-    console.log(res);
-    // 再度表示する
-    getList();
-  });
-*/
 }
