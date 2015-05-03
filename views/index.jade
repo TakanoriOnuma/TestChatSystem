@@ -3,3 +3,21 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+
+  // Chat一覧を表示する
+  .list
+  // Chat入力フォームを作成する
+  form#fm
+    p
+      label(for='name') 名前
+      input#name(type='text', name='name')
+    p
+      label(for='text') 内容
+      input#text(type='text', name='text')
+    p
+      input(type='submit', value='投稿する')
+
+// jQueryとchat.jsを読み込む
+block scripts
+  script(src='http://code.jquery.com/jquery-2.0.0.min.js')
+  script(src='javascripts/chat.js')

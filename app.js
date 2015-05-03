@@ -5,9 +5,15 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var MONGO_URL = process.env.MONGOLAB_URI || 'mongodb://localhost/chat';
+
+var mongoose = require('mongoose');
+var res = mongoose.connect(MONGO_URL);
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+//var port = process.env.PORT || 3000;
 var app = express();
 
 // view engine setup
@@ -24,6 +30,42 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+
+// スキーマの定義
+var Schema = mongoose.Schema;
+var chatSchema = new Schema({
+  name : String,
+  text : String
+});
+mongoose.model('Chat', chatSchema);
+
+// /chatにGETアクセスした時、chat一覧を取得するAPI
+app.get('/chat', function(req, res) {
+  var Chat = mongoose.model('Chat');
+  // 全てのチャットを取得して送る
+  Chat.find({}, function(err, chats) {
+    res.send(chats);
+  });
+});
+
+// /chatにPOSTアクセスしたとき、Chatを追加するAPI
+app.post('/chat', function(req, res) {
+  var name = req.body.name;
+  var text = req.body.text;
+  if(name && text) {
+    var Chat = mongoose.model('Chat');
+    var chat = new Chat();
+    chat.name = name;
+    chat.text = text;
+    chat.save();
+
+    res.send(true);
+  }
+  else {
+    res.send(false);
+  }
+});
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

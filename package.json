@@ -16,5 +16,8 @@
   },
   "engins": {
     "node": "0.10.29"
+  },
+  "devDependencies": {
+    "mongoose": "^4.0.2"
   }
 }
