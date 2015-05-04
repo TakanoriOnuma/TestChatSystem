@@ -53,17 +53,9 @@ function getList() {
 function setMoveListener($leaf) {
   var pos = {};
   var $mover = null;
-  var count = 0;
+
   var mousemover = function($mover, e) {
-    if($mover === null) {
-      return;
-    }
-
-    // 10回移動イベントが来たら動かす
-    count += 1;
-    if(count >= 10) {
-      count = 0;
-
+    if($mover !== null) {
       socket.emit('moveChat', {
         x : e.pageX - 20,
         y : e.pageY - 30,
@@ -71,7 +63,6 @@ function setMoveListener($leaf) {
       });
     }
   };
-
   $leaf
     .mousedown(function(e) {
       $mover = $(this);
