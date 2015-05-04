@@ -53,8 +53,17 @@ function getList() {
 function setMoveListener($leaf) {
   var pos = {};
   var $mover = null;
+  var count = 0;
   var mousemover = function($mover, e) {
-    if($mover !== null) {
+    if($mover === null) {
+      return;
+    }
+
+    // 10回移動イベントが来たら動かす
+    count += 1;
+    if(count >= 10) {
+      count = 0;
+
       $mover.css({
         top:  e.pageY - 30,
         left: e.pageX - 20
@@ -66,6 +75,7 @@ function setMoveListener($leaf) {
       });
     }
   };
+
   $leaf
     .mousedown(function(e) {
       $mover = $(this);
