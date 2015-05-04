@@ -64,10 +64,6 @@ function setMoveListener($leaf) {
     if(count >= 10) {
       count = 0;
 
-      $mover.css({
-        top:  e.pageY - 30,
-        left: e.pageX - 20
-      });
       socket.emit('moveChat', {
         x : e.pageX - 20,
         y : e.pageY - 30,
