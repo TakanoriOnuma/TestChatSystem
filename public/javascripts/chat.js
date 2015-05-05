@@ -50,12 +50,16 @@ function getList() {
 }
 
 // chatの移動イベントの追加
+var $mover = null;
 function setMoveListener($leaf) {
   var pos = {};
-  var $mover = null;
 
   var mousemover = function($mover, e) {
     if($mover !== null) {
+      $mover.css({
+        left: e.pageX - 20,
+        top:  e.pageY - 30
+      });
       socket.emit('moveChat', {
         x : e.pageX - 20,
         y : e.pageY - 30,
@@ -149,6 +153,11 @@ socket.on('toggleChat', function(key) {
 
 // moveChatというイベントを受信したら指定したチャットを移動する
 socket.on('moveChat', function(moveChat) {
+  // 今移動中のチャットであれば、何もしない
+  if($mover !== null && $mover.attr('key') === moveChat.key) {
+    return;
+  }
+
   var $chat = $('.chatboard p[key=' + moveChat.key + ']');
   $chat.css({
     left: moveChat.x,
