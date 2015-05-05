@@ -126,16 +126,15 @@ socket.on('chat', function(chat) {
     socket.emit('toggleChat', {
       key : key
     });
-    $('.chatboard').append(makeChatleaf(chat));
-    $('.leaf:last')
-      .css({
-        top: chat.y,
-        left: chat.x
-      })
-      .hide();
-    setMoveListener($('.leaf'));
   });
-
+  $('.chatboard').append(makeChatleaf(chat));
+  $('.leaf:last')
+    .css({
+      top: chat.y,
+      left: chat.x
+    })
+    .hide();
+  setMoveListener($('.leaf'));
 });
 
 // toggleChatというイベントを受信したらkeyのチャットをトグルする
