@@ -52,17 +52,17 @@ function getList() {
 // chatの移動イベントの追加
 var $mover = null;
 function setMoveListener($leaf) {
-  var pos = {};
+  var pos = { x: 0, y: 0 };
 
   var mousemover = function($mover, e) {
     if($mover !== null) {
       $mover.css({
-        left: e.pageX - 20,
-        top:  e.pageY - 30
+        left: e.pageX - pos.x,
+        top:  e.pageY - pos.y
       });
       socket.emit('moveChat', {
-        x : e.pageX - 20,
-        y : e.pageY - 30,
+        x : e.pageX - pos.x,
+        y : e.pageY - pos.y,
         key : $mover.attr('key')
       });
     }
@@ -70,6 +70,8 @@ function setMoveListener($leaf) {
   $leaf
     .mousedown(function(e) {
       $mover = $(this);
+      pos.x = e.pageX - $mover.position().left;
+      pos.y = e.pageY - $mover.position().top;
       return false;
     })
     .mouseup(function() {
