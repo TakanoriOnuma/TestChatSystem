@@ -134,7 +134,7 @@ io.sockets.on('connection', function(socket) {
       chat.save();
     });
 
-    socket.volatile.emit('moveChat', moveChat);
+    io.emit('moveChat', moveChat);
   });
 
   // 接続が切断した時
